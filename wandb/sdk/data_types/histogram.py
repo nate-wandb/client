@@ -43,14 +43,14 @@ class Histogram(WBValue):
         histogram: ([int]) number of elements falling in each bin
     """
 
-    MAX_LENGTH: int = 512
+    MAX_LENGTH: int = 1000
     _log_type = "histogram"
 
     def __init__(
         self,
         sequence: Optional[Sequence] = None,
         np_histogram: Optional["NumpyHistogram"] = None,
-        num_bins: int = 64,
+        num_bins: int = 1000,
     ) -> None:
 
         if np_histogram:
