@@ -10,9 +10,9 @@ Usage:
 """
 
 import argparse
-from dataclasses import dataclass
 import pathlib
 import sys
+from dataclasses import dataclass
 from typing import List
 
 
@@ -96,7 +96,7 @@ end box
         """
         print(header)
         # TODO: move to common place (sorted sequence items)
-        for line in [l for (ts, l) in sorted(lines)]:
+        for _, line in sorted(lines):
             print(line)
         print("@enduml")
 
@@ -125,7 +125,7 @@ participant SenderThread as sender
         """
         print(header)
         # TODO: move to common place (sorted sequence items)
-        for line in [l for (ts, l) in sorted(lines)]:
+        for _, line in sorted(lines):
             print(line)
 
     def load(self, fname: str) -> None:

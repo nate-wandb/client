@@ -4,8 +4,8 @@ Based on:
     https://docs.ray.io/en/master/tune/examples/tune-wandb.html
 """
 
-from _test_support import get_wandb_api_key_file
 import numpy as np
+from _test_support import get_wandb_api_key_file
 from ray import air, tune
 from ray.air import session
 from ray.air.callbacks.wandb import WandbLoggerCallback
@@ -18,7 +18,7 @@ def objective(config, checkpoint_dir=None):
 
 
 def tune_function(api_key_file):
-    """Example for using a WandbLoggerCallback with the function API"""
+    """Example for using a WandbLoggerCallback with the function API."""
     tuner = tune.Tuner(
         objective,
         tune_config=tune.TuneConfig(

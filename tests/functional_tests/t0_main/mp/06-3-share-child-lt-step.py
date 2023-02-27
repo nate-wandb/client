@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-"""Test parent and child processes sharing a run. Compare to a run in a single process.
-example usage of `run.log` with user provide step less than the internal step"""
+"""Test parent and child processes sharing a run.
 
-from contextlib import redirect_stderr
+Compare to a run in a single process.
+Example usage of `run.log` with user provide step less than the internal step.
+"""
+
 import io
 import multiprocessing as mp
+from contextlib import redirect_stderr
 
 import wandb
 import yea

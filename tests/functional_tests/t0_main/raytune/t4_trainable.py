@@ -4,12 +4,12 @@ Based on:
     https://docs.ray.io/en/master/tune/examples/tune-wandb.html
 """
 
-from _test_support import get_wandb_api_key_file
 import numpy as np
+import wandb
+from _test_support import get_wandb_api_key_file
 from ray import tune
 from ray.tune import Trainable
 from ray.tune.integration.wandb import WandbTrainableMixin
-import wandb
 
 
 class WandbTrainable(WandbTrainableMixin, Trainable):
@@ -21,7 +21,7 @@ class WandbTrainable(WandbTrainableMixin, Trainable):
 
 
 def tune_trainable(api_key_file):
-    """Example for using a WandTrainableMixin with the class API"""
+    """Example for using a WandTrainableMixin with the class API."""
     tuner = tune.Tuner(
         WandbTrainable,
         tune_config=tune.TuneConfig(

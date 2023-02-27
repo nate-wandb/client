@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Tests that feature importance visualization is produced on elasticnet model
+"""Test that feature importance visualization is produced on elasticnet model.
+
 ---
 id: 0.sklearn.feature_importance_attribute_exists_for_elasticnet
 tag:
@@ -17,10 +18,10 @@ assert:
     - :wandb:runs[0][summary][feature_importances][ncols]: 2
     - :wandb:runs[0][summary][feature_importances][nrows]: 30
 """
+import wandb
 from sklearn import datasets
 from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import train_test_split
-import wandb
 
 wandb.init("my-scikit-integration")
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Demonstrate basic API of plot_clusterer.
+
 ---
 id: 0.sklearn.plot_clusterer-basic
 tag:
@@ -20,9 +21,9 @@ assert:
     - :yea:exit: 0
 """
 import numpy as np
+import wandb
 from sklearn import datasets
 from sklearn.cluster import KMeans
-import wandb
 
 wandb.init("my-scikit-integration")
 

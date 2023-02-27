@@ -1,15 +1,19 @@
-"""
+"""Script for testing offline artifact logging.
+
+Use:
+```sh
 rm -rf wandb \
- && WANDB_BASE_URL=http://api.wandb.test python offline_artifacts.py \
- && rm -rf wandb \
- && WANDB_BASE_URL=http://api.wandb.test python offline_artifacts.py --online
+  && WANDB_BASE_URL=http://api.wandb.test python offline_artifacts.py \
+  && rm -rf wandb \
+  && WANDB_BASE_URL=http://api.wandb.test python offline_artifacts.py --online.
+```
 """
 
 import sys
 
-from click.testing import CliRunner
 import numpy as np
 import wandb
+from click.testing import CliRunner
 from wandb.cli import cli
 
 dataset_size = 250

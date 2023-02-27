@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Tests that feature importance visualization is not produced on model without feature importances
+"""Ensure feature importance visualization is not produced on model without feature importances.
+
 ---
 id: 0.sklearn.feature_importance_attribute_does_not_exist
 tag:
@@ -17,10 +18,10 @@ assert:
       - :wandb:runs[0][output][stderr]
       - Cannot plot feature importances
 """
+import wandb
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-import wandb
 
 run = wandb.init("my-scikit-integration")
 

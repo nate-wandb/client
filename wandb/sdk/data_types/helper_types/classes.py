@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, Optional, Sequence, Type, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Type, Union
 
 from .. import _dtypes
 from ..base_types.media import Media
@@ -17,7 +17,7 @@ class Classes(Media):
     _class_set: Sequence[dict]
 
     def __init__(self, class_set: Sequence[dict]) -> None:
-        """Classes is holds class metadata intended to be used in concert with other objects when visualizing artifacts
+        """Classes is holds class metadata intended to be used in concert with other objects when visualizing artifacts.
 
         Args:
             class_set (list): list of dicts in the form of {"id":int|str, "name":str}

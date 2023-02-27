@@ -9,21 +9,16 @@ from typing import Any, Dict, List, Optional
 import wandb
 from wandb.sdk.launch.builder.abstract import AbstractBuilder
 
-from .abstract import AbstractRun, AbstractRunner, Status
-from .._project_spec import get_entry_point_command, LaunchProject
-from ..builder.build import (
-    docker_image_exists,
-    get_env_vars_dict,
-    pull_docker_image,
-)
+from .._project_spec import LaunchProject, compute_command_args
+from ..builder.build import docker_image_exists, get_env_vars_dict, pull_docker_image
 from ..utils import (
+    LOG_PREFIX,
+    PROJECT_SYNCHRONOUS,
     _is_wandb_dev_uri,
     _is_wandb_local_uri,
-    PROJECT_DOCKER_ARGS,
-    PROJECT_SYNCHRONOUS,
     sanitize_wandb_api_key,
 )
-
+from .abstract import AbstractRun, AbstractRunner, Status
 
 _logger = logging.getLogger(__name__)
 
@@ -55,10 +50,8 @@ class LocalSubmittedRun(AbstractRun):
             except OSError:
                 # The child process may have exited before we attempted to terminate it, so we
                 # ignore OSErrors raised during child process termination
-                _logger.info(
-                    "Failed to terminate child process (PID %s). The process may have already exited.",
-                    self.command_proc.pid,
-                )
+                _msg = f"{LOG_PREFIX}Failed to terminate child process PID {self.command_proc.pid}"
+                _logger.debug(_msg)
             self.command_proc.wait()
 
     def get_status(self) -> Status:
@@ -80,7 +73,11 @@ class LocalContainerRunner(AbstractRunner):
         registry_config: Dict[str, Any],
     ) -> Optional[AbstractRun]:
         synchronous: bool = self.backend_config[PROJECT_SYNCHRONOUS]
-        docker_args: Dict[str, Any] = self.backend_config[PROJECT_DOCKER_ARGS]
+        docker_args: Dict[str, Any] = launch_project.resource_args.get(
+            "local-container", {}
+        )
+        # TODO: leaving this here because of existing CLI command
+        # we should likely just tell users to specify the gpus arg directly
         if launch_project.cuda:
             docker_args["gpus"] = "all"
 
@@ -104,36 +101,51 @@ class LocalContainerRunner(AbstractRunner):
             env_vars["WANDB_BASE_URL"] = f"http://host.docker.internal:{port}"
         elif _is_wandb_dev_uri(self._api.settings("base_url")):
             env_vars["WANDB_BASE_URL"] = "http://host.docker.internal:9002"
+
         if launch_project.docker_image:
             # user has provided their own docker image
             image_uri = launch_project.image_name
             if not docker_image_exists(image_uri):
                 pull_docker_image(image_uri)
-            env_vars.pop("WANDB_RUN_ID")
-            # if they've given an override to the entrypoint
-            entry_cmd = get_entry_point_command(
-                entry_point, launch_project.override_args
-            )
+            entry_cmd = []
+            if entry_point is not None:
+                entry_cmd = entry_point.command
+            override_args = compute_command_args(launch_project.override_args)
             command_str = " ".join(
-                get_docker_command(image_uri, env_vars, entry_cmd, docker_args)
+                get_docker_command(
+                    image_uri,
+                    env_vars,
+                    entry_cmd=entry_cmd,
+                    docker_args=docker_args,
+                    additional_args=override_args,
+                )
             ).strip()
         else:
             assert entry_point is not None
             repository: Optional[str] = registry_config.get("url")
+            _logger.info("Building docker image...")
             image_uri = builder.build_image(
                 launch_project,
                 repository,
                 entry_point,
-                docker_args,
             )
+            _logger.info(f"Docker image built with uri {image_uri}")
+            # entry_cmd and additional_args are empty here because
+            # if launch built the container they've been accounted
+            # in the dockerfile and env vars respectively
             command_str = " ".join(
-                get_docker_command(image_uri, env_vars, [""], docker_args)
+                get_docker_command(
+                    image_uri,
+                    env_vars,
+                    docker_args=docker_args,
+                )
             ).strip()
 
         if not self.ack_run_queue_item(launch_project):
             return None
         sanitized_cmd_str = sanitize_wandb_api_key(command_str)
-        wandb.termlog(f"Launching run in docker with command: {sanitized_cmd_str}")
+        _msg = f"{LOG_PREFIX}Launching run in docker with command: {sanitized_cmd_str}"
+        wandb.termlog(_msg)
         run = _run_entry_point(command_str, launch_project.project_dir)
         if synchronous:
             run.wait()
@@ -172,10 +184,11 @@ def _run_entry_point(command: str, work_dir: Optional[str]) -> AbstractRun:
 def get_docker_command(
     image: str,
     env_vars: Dict[str, str],
-    entry_cmd: List[str],
-    docker_args: Dict[str, Any] = None,
+    entry_cmd: Optional[List[str]] = None,
+    docker_args: Optional[Dict[str, Any]] = None,
+    additional_args: Optional[List[str]] = None,
 ) -> List[str]:
-    """Constructs the docker command using the image and docker args.
+    """Construct the docker command using the image and docker args.
 
     Arguments:
     image: a Docker image to be run
@@ -192,21 +205,22 @@ def get_docker_command(
 
     if docker_args:
         for name, value in docker_args.items():
-            # Passed just the name as boolean flag
-            if isinstance(value, bool) and value:
-                if len(name) == 1:
-                    cmd += ["-" + shlex.quote(name)]
-                else:
-                    cmd += ["--" + shlex.quote(name)]
+            if len(name) == 1:
+                prefix = "-" + shlex.quote(name)
             else:
-                # Passed name=value
-                if len(name) == 1:
-                    cmd += ["-" + shlex.quote(name), shlex.quote(str(value))]
-                else:
-                    cmd += ["--" + shlex.quote(name), shlex.quote(str(value))]
-
+                prefix = "--" + shlex.quote(name)
+            if isinstance(value, list):
+                for v in value:
+                    cmd += [prefix, shlex.quote(str(v))]
+            elif isinstance(value, bool) and value:
+                cmd += [prefix]
+            else:
+                cmd += [prefix, shlex.quote(str(value))]
+    if entry_cmd:
+        cmd += ["--entrypoint"] + entry_cmd
     cmd += [shlex.quote(image)]
-    cmd += entry_cmd
+    if additional_args:
+        cmd += additional_args
     return cmd
 
 

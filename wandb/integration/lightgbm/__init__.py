@@ -10,11 +10,11 @@ lgb = lgb.train(param_list, d_train, callbacks=[wandb_callback()])
 """
 
 from pathlib import Path
-from typing import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import lightgbm  # type: ignore
 from lightgbm import Booster
+
 import wandb
 from wandb.sdk.lib import telemetry as wb_telemetry
 
@@ -111,16 +111,17 @@ def wandb_callback(log_params: bool = True, define_metric: bool = True) -> Calla
     Example:
         ```python
         params = {
-            'boosting_type': 'gbdt',
-            'objective': 'regression',
-            .
+            "boosting_type": "gbdt",
+            "objective": "regression",
         }
-        gbm = lgb.train(params,
-                        lgb_train,
-                        num_boost_round=10,
-                        valid_sets=lgb_eval,
-                        valid_names=('validation'),
-                        callbacks=[wandb_callback()])
+        gbm = lgb.train(
+            params,
+            lgb_train,
+            num_boost_round=10,
+            valid_sets=lgb_eval,
+            valid_names=("validation"),
+            callbacks=[wandb_callback()],
+        )
         ```
     """
     log_params_list: "List[bool]" = [log_params]
@@ -163,7 +164,7 @@ def wandb_callback(log_params: bool = True, define_metric: bool = True) -> Calla
 def log_summary(
     model: Booster, feature_importance: bool = True, save_model_checkpoint: bool = False
 ) -> None:
-    """Logs useful metrics about lightgbm model after training is done.
+    """Log useful metrics about lightgbm model after training is done.
 
     Arguments:
         model: (Booster) is an instance of lightgbm.basic.Booster.
@@ -179,16 +180,17 @@ def log_summary(
     Example:
         ```python
         params = {
-            'boosting_type': 'gbdt',
-            'objective': 'regression',
-            .
+            "boosting_type": "gbdt",
+            "objective": "regression",
         }
-        gbm = lgb.train(params,
-                        lgb_train,
-                        num_boost_round=10,
-                        valid_sets=lgb_eval,
-                        valid_names=('validation'),
-                        callbacks=[wandb_callback()])
+        gbm = lgb.train(
+            params,
+            lgb_train,
+            num_boost_round=10,
+            valid_sets=lgb_eval,
+            valid_names=("validation"),
+            callbacks=[wandb_callback()],
+        )
 
         log_summary(gbm)
         ```

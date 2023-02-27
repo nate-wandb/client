@@ -1,5 +1,5 @@
-from typing import Callable, Dict, Optional, Union
 import urllib.parse
+from typing import Callable, Dict, Optional, Union
 
 import wandb
 from wandb import env
@@ -30,8 +30,8 @@ def _get_sweep_url(api, sweep_id):
 
 def sweep(
     sweep: Union[dict, Callable],
-    entity: str = None,
-    project: str = None,
+    entity: Optional[str] = None,
+    project: Optional[str] = None,
 ) -> str:
     """Initialize a hyperparameter sweep.
 
@@ -53,7 +53,7 @@ def sweep(
         team in the UI before starting to log runs.  If you don't
         specify an entity, the run will be sent to your default
         entity, which is usually your username. Change your default
-        entity in [Settings](wandb.ai/settings) under "default
+        entity in [Settings](https://wandb.ai/settings) under "default
         location to create new projects".
       project: str (optional). The name of the project where you're
         sending the new run. If the project is not specified, the
@@ -67,16 +67,14 @@ def sweep(
         <!--yeadoc-test:one-parameter-sweep-->
         ```python
         import wandb
+
         sweep_configuration = {
             "name": "my-awesome-sweep",
             "metric": {"name": "accuracy", "goal": "maximize"},
             "method": "grid",
-            "parameters": {
-                "a": {
-                    "values": [1, 2, 3, 4]
-                }
-            }
+            "parameters": {"a": {"values": [1, 2, 3, 4]}},
         }
+
 
         def my_train_func():
             # read the current value of parameter "a" from wandb.config
@@ -85,13 +83,13 @@ def sweep(
 
             wandb.log({"a": a, "accuracy": a + 1})
 
+
         sweep_id = wandb.sweep(sweep_configuration)
 
         # run the sweep
         wandb.agent(sweep_id, function=my_train_func)
         ```
     """
-
     if callable(sweep):
         sweep = sweep()
     """Sweep create for controller api and jupyter (eventually for cli)."""
@@ -128,6 +126,7 @@ def controller(
     Usage:
         ```python
         import wandb
+
         tuner = wandb.controller(...)
         print(tuner.sweep_config)
         print(tuner.sweep_id)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Test prodigy integration
+"""Test prodigy integration.
 
 ---
 id: 0.prodigy.1
@@ -56,8 +56,8 @@ import sys
 from unittest.mock import Mock
 from zipfile import ZipFile
 
-from prodigy_connect import Connect
 import wandb
+from prodigy_connect import Connect
 from wandb.integration.prodigy import upload_dataset
 
 sys.modules["prodigy"] = Mock()

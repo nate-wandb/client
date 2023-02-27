@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-"""WB-8618: warn the user if they are using a local key to log in to cloud"""
+"""WB-8618: warn the user if they are using a local key to log in to cloud."""
 
 import pytest
 import wandb
 import wandb.errors
-
 
 if __name__ == "__main__":
     # api_key starts with "local", but base_url points to cloud

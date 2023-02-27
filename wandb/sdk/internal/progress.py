@@ -1,10 +1,8 @@
-"""
-progress.
-"""
+"""progress."""
 
 import os
 import sys
-from typing import IO, Optional, TYPE_CHECKING
+from typing import IO, TYPE_CHECKING, Optional
 
 from wandb.errors import CommError
 
@@ -20,7 +18,7 @@ if TYPE_CHECKING:
 
 
 class Progress:
-    """A helper class for displaying progress"""
+    """A helper class for displaying progress."""
 
     ITER_BYTES = 1024 * 1024
 
@@ -40,7 +38,7 @@ class Progress:
         self.len = os.fstat(file.fileno()).st_size
 
     def read(self, size=-1):
-        """Read bytes and call the callback"""
+        """Read bytes and call the callback."""
         bites = self.file.read(size)
         self.bytes_read += len(bites)
         if not bites and self.bytes_read < self.len:
@@ -59,12 +57,12 @@ class Progress:
         return bites
 
     def rewind(self) -> None:
-        self.callback(0, -self.bytes_read)
+        self.callback(-self.bytes_read, 0)
         self.bytes_read = 0
         self.file.seek(0)
 
     def __getattr__(self, name):
-        """Fallback to the file object for attrs not defined here"""
+        """Fallback to the file object for attrs not defined here."""
         if hasattr(self.file, name):
             return getattr(self.file, name)
         else:

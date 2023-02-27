@@ -1,23 +1,21 @@
-"""
-apikey util.
-"""
+"""apikey util."""
 
-from functools import partial
 import os
 import stat
 import sys
 import textwrap
+from functools import partial
 from urllib.parse import urlparse
 
 import click
 import requests
+
 import wandb
 from wandb.apis import InternalApi
 from wandb.errors import term
 from wandb.util import _is_databricks, isatty, prompt_choices
 
 from .wburls import wburls
-
 
 LOGIN_CHOICE_ANON = "Private W&B dashboard, no account required"
 LOGIN_CHOICE_NEW = "Create a W&B account"
@@ -151,7 +149,7 @@ def prompt_api_key(  # noqa: C901
 
 
 def write_netrc(host, entity, key):
-    """Add our host and key to .netrc"""
+    """Add our host and key to .netrc."""
     key_prefix, key_suffix = key.split("-", 1) if "-" in key else ("", key)
     if len(key_suffix) != 40:
         wandb.termerror(

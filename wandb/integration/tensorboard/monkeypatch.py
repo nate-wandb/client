@@ -1,4 +1,4 @@
-"""monkeypatch: patch code to add tensorboard hooks"""
+"""monkeypatch: patch code to add tensorboard hooks."""
 
 import os
 import re
@@ -7,7 +7,6 @@ from typing import Any, Optional
 
 import wandb
 import wandb.util
-
 
 TENSORBOARD_C_MODULE = "tensorflow.python.ops.gen_summary_ops"
 TENSORBOARD_X_MODULE = "tensorboardX.writer"
@@ -141,7 +140,7 @@ def _patch_file_writer(
     # This configures non-TensorFlow Tensorboard logging, or tensorflow <= 1.15
     logdir_hist = []
 
-    class TBXEventFileWriter(writer.EventFileWriter):  # type: ignore
+    class TBXEventFileWriter(writer.EventFileWriter):
         def __init__(self, logdir: str, *args: Any, **kwargs: Any) -> None:
             logdir_hist.append(logdir)
             root_logdir_arg = root_logdir

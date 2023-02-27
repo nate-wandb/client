@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-"""Test stdin timeout"""
+"""Test stdin timeout."""
 
 import time
 
 import wandb
-
 
 timeout = 4
 slop = 0.50

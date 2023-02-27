@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Demonstrate basic API of plot_learning_curve.
+
 ---
 id: 0.sklearn.plot_learning_curve-basic
 tag:
@@ -17,10 +18,10 @@ assert:
     - :wandb:runs[0][summary][learning_curve][ncols]: 3
     - :wandb:runs[0][summary][learning_curve][nrows]: 10
 """
+import wandb
 from sklearn import datasets
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-import wandb
 
 wandb.init("my-scikit-integration")
 

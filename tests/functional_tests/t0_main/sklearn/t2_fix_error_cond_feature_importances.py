@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Demonstrate fix for error condition for plotting feature importances in sklearn
+"""Demonstrate fix for error condition for plotting feature importances in sklearn.
 
 Reproduction for WB-6697
 
@@ -11,7 +11,7 @@ plugin:
   - wandb
 depend:
   requirements:
-    - sklearn
+    - scikit-learn
     - numpy
 assert:
   - :wandb:runs_len: 1
@@ -29,8 +29,8 @@ assert:
 """
 
 import numpy as np
-from sklearn.linear_model import LogisticRegression
 import wandb
+from sklearn.linear_model import LogisticRegression
 
 run = wandb.init()
 

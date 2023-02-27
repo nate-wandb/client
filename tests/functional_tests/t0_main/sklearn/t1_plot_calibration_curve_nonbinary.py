@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Demonstrate non-binary plot calibration curve failure
+"""Demonstrate non-binary plot calibration curve failure.
 
 Reproduction for WB-6749.
 
@@ -34,9 +34,9 @@ assert:
 
 import numpy as np
 import pandas as pd
+import wandb
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-import wandb
 
 # yea test will grab this
 # data_url = "https://raw.githubusercontent.com/wandb/examples/master/examples/data/wine.csv"
